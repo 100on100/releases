@@ -1,0 +1,108 @@
+DRAFT: to be replaced after counsel review
+
+100on100 EVALUATION LICENCE (PROPRIETARY)
+
+This licence is between FastBuilder.AI [full legal name and entity type], doing business as
+100on100, of 400 East View St, Columbus, Ohio, USA ("Licensor"), and the person or organisation
+that downloads, installs or uses the Software ("You").
+
+By downloading, installing or using the Software, You accept this licence. If You do not accept
+it, do not use the Software.
+
+1. Definitions
+ - "Software" means the 100on100 decoder in compiled form, as published by Licensor: the
+   command-line tool, the static library, the WebAssembly module and the header file. It
+   includes its documentation and any updates Licensor provides under this licence. It does not
+   include source code, which is not licensed to You and is not provided.
+ - "Evaluation" means using the Software internally to assess whether it suits Your needs:
+   testing, benchmarking, prototyping, research and demonstration to Your own personnel.
+ - "Production Use" means any use other than Evaluation. It includes:
+     - use in or with any product, service, device or system provided to any third party;
+     - use in operational, clinical or mission workflows;
+     - use to process data for a customer;
+     - any commercial use.
+
+2. Evaluation licence
+Subject to this licence, Licensor grants You a non-exclusive, non-transferable,
+non-sublicensable, royalty-free, revocable licence to install and use the Software for Evaluation
+only, for [90 days / an unlimited period] from first download.
+
+3. Production Use and redistribution
+Production Use, and any redistribution of the Software, require a separate written contract with
+Licensor. Contact 100on100@fastbuilder.ai. Nothing in this licence grants those rights.
+
+4. Restrictions
+You may not, and may not permit others to:
+ 1. reverse engineer, decompile, disassemble or otherwise attempt to derive source code,
+    algorithms, file-format internals or trade secrets from the Software, except to the extent
+    applicable law expressly permits it despite this restriction [subject to counsel review];
+ 2. distribute, sublicense, rent, lease, lend, host for others or otherwise make the Software
+    available to any third party;
+ 3. modify the Software or create derivative works of it;
+ 4. remove or alter any notice, checksum file or provenance file supplied with the Software;
+ 5. use the Software for Production Use without a separate written contract.
+
+5. Benchmarks and publication
+You may publish the results of benchmarks You run on the Software, provided You:
+ - state the Software's version and the checksum of the binary used;
+ - describe Your method and data well enough for the results to be reproduced;
+ - notify Licensor at 100on100@fastbuilder.ai at least [10] days before publication.
+
+6. Ownership
+The Software is licensed, not sold. Licensor and its licensors keep all rights, title and
+interest in it, including all intellectual property rights. All rights not expressly granted are
+reserved.
+
+7. Feedback
+If You give Licensor suggestions or bug reports, Licensor may use them without obligation to You.
+
+8. Third-party components
+Some components are subject to their own licences, for example the WebAssembly system library
+(wasi-libc). Those licences are listed in THIRD-PARTY-NOTICES, which ships with the Software, and
+govern those components to the extent they conflict with this licence.
+
+9. Not a medical device
+The Software is not a medical device and is not cleared or approved by the US Food and Drug
+Administration or any other regulator. It is not intended for diagnosis, treatment or any clinical
+decision. A manufacturer that incorporates the Software into a regulated product does so under a
+separate written contract and remains solely responsible for that product's regulatory
+compliance.
+
+10. Security and correctness
+The Software is designed to refuse damaged or hostile input with numbered refusal codes. However,
+Licensor does not warrant that the Software is free of defects or vulnerabilities, or that it will
+detect or refuse every malformed input. Please report suspected vulnerabilities to
+100on100@fastbuilder.ai [security contact and disclosure policy to be added].
+
+11. Disclaimer of warranties
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, TITLE AND NON-INFRINGEMENT, TO THE MAXIMUM
+EXTENT PERMITTED BY LAW.
+
+12. Limitation of liability
+TO THE MAXIMUM EXTENT PERMITTED BY LAW, LICENSOR SHALL NOT BE LIABLE FOR ANY INDIRECT, INCIDENTAL,
+SPECIAL, CONSEQUENTIAL OR PUNITIVE DAMAGES, OR FOR LOSS OF DATA, PROFITS OR BUSINESS, ARISING OUT
+OF THIS LICENCE OR THE SOFTWARE. LICENSOR'S TOTAL LIABILITY SHALL NOT EXCEED [AMOUNT TO BE SET BY
+COUNSEL].
+
+13. Export control
+The Software may be subject to US export control laws, including the Export Administration
+Regulations. You will comply with them, and You will not export, re-export or transfer the
+Software to any prohibited country, entity or person, or for any prohibited end use.
+
+14. US Government end users
+The Software is "commercial computer software" and its documentation is "commercial computer
+software documentation", as those terms are used in FAR 12.212 and DFARS 227.7202. Government end
+users acquire it with only the rights set out in this licence.
+
+15. Termination
+This licence ends automatically if You breach it. On termination You must stop using the Software
+and delete all copies. Sections 4 to 7 and 9 to 17 survive termination.
+
+16. Governing law
+This licence is governed by the laws of the State of Ohio, USA, without regard to its
+conflict-of-laws rules. The courts in [Franklin County, Ohio] have exclusive jurisdiction.
+
+17. Entire agreement
+This is the entire agreement between You and Licensor about the Software under these evaluation
+terms. A separate written contract, if any, prevails for Production Use.
