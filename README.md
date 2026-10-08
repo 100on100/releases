@@ -1,4 +1,4 @@
-# 100on100 v1.0.0 (evaluation licence)
+# 100on100 v1.1.0 (evaluation licence)
 
 This is an evaluation release of the 100on100 decoder. It is licensed for evaluation only: read
 `LICENSE` first. It is not for production use.
@@ -10,16 +10,23 @@ exactly, or refuses the file with a numbered reason.
 
 | Path | What it is |
 |---|---|
-| `100on100.h` | the C header (the library interface) |
-| `linux-x86_64/`, `linux-aarch64/`, `macos-arm64/` | `100on100` (command-line tool) and `lib100on100.a` (static library) |
-| `wasm32-wasip1/100on100.wasm` | the command-line tool as a WebAssembly (WASI) module |
-| `LICENSE`, `THIRD-PARTY-NOTICES` | licence terms and notices for the WebAssembly system library |
+| `100on100.h`, `100on100v5.h` | the C headers: the original decoder and the version 5 colour decoder |
+| `<platform>/100on100` (`100on100.exe` on Windows), `<platform>/lib100on100.a` | command-line tool and static library of the original decoder |
+| `<platform>/100on100-v5` (`100on100-v5.exe` on Windows), `<platform>/lib100on100v5.a` | command-line tool and static library of the version 5 colour decoder |
+| `wasm32-wasip1/100on100.wasm`, `wasm32-wasip1/100on100-v5.wasm` | the two command-line tools as WebAssembly (WASI) modules |
+| `100on100-v5-riscv64.elf` | the version 5 decoder as a RISC-V reference image (see below) |
+| `LICENSE`, `THIRD-PARTY-NOTICES` | licence terms and third-party notices |
 | `SHA256SUMS`, `PROVENANCE.txt` | checksums of every file, and how the files were built |
 
-Check the files with `sha256sum -c SHA256SUMS` (on macOS: `shasum -a 256 -c SHA256SUMS`).
-Every exported symbol of the static library starts with `i100_`.
+`<platform>` is one of `linux-x86_64`, `linux-aarch64`, `macos-arm64`, `macos-x86_64` (macOS 11 or
+later), `windows-arm64`, `windows-x86_64`. The original decoder files are the same files as in
+version 1.0.0.
 
-## Command-line tool
+Check the files with `sha256sum -c SHA256SUMS` (on macOS: `shasum -a 256 -c SHA256SUMS`).
+Every exported symbol of the original static libraries starts with `i100_`, and of the version 5
+libraries with `i100v5_`.
+
+## Original decoder, command-line tool
 
     100on100 input > output.pgm
     echo $?
@@ -33,7 +40,7 @@ Every exported symbol of the static library starts with `i100_`.
 - WebAssembly: `wasmtime run --dir=. 100on100.wasm input > output.pgm` (any WASI runtime that can
   preopen a directory works).
 
-## C library, in plain words
+## Original decoder, C library, in plain words
 
 Include `100on100.h` and link `lib100on100.a`. There are four functions.
 
@@ -80,6 +87,56 @@ Rules stated in the header:
 The header says the decoder's codes stop at 45. Other numbers from 1 to 45 are further refusals of
 damaged or unsupported input and are returned as plain numbers; this release does not document
 them individually. The descriptions of 44 and 45 above are not in the header.
+
+## Version 5 colour decoder (new in 1.1.0)
+
+    100on100-v5 input > samples
+    100on100-v5 -t PLANE TILE input > samples
+    echo $?
+
+- `input` is one version 5 colour container. The tool writes the decoded picture to standard
+  output as interleaved R, G, B (and A, when the picture has it) samples: one octet per sample when
+  the picture's bit depth is 8 or less, otherwise two octets, little-endian. There is no PGM
+  header; the width, height and depth are in the container header and `i100v5_probe` reports them.
+- With `-t PLANE TILE` the tool decodes one tile of one plane on its own and writes its samples,
+  row by row, two octets each, little-endian. Planes are numbered in coding order: 0 = G, 1 = R,
+  2 = B, 3 = A.
+- The exit status is the decoder's numbered code: `0` on success, otherwise the refusal code.
+  Nothing is written to standard output when the code is not 0. The tool's own statuses are 64
+  (wrong number of arguments), 66 (input not readable), 70 (out of memory) and 74 (write error).
+- WebAssembly: `wasmtime run --dir=. 100on100-v5.wasm input > samples`.
+
+The C library (`100on100v5.h`, `lib100on100v5.a`) has three functions:
+`i100v5_probe` (header only: sizes and the workspace a decode needs), `i100v5_decode` (the whole
+picture) and `i100v5_decode_tile` (one tile of one plane). As in the original library, you
+allocate the workspace and the output, the library allocates nothing and keeps no global state,
+two decodes with two workspaces may run at the same time, and the output is to be read only after a
+return of 0. Codes 100 and above are the library's own: 100 workspace too small, 101 output too
+small, 102 sizes too large for this platform's `size_t`, 103 a NULL pointer or a negative plane.
+Refusal codes the header lists for the decoder itself: header stage 11, 12 to 15, 16, 50, 17, 22,
+20, 21, 23, 42, 41, 45, 29, 36, 37; payload stage 19 (tile length), 31, 38 (tile checksum), 40, 44,
+46, 47, 48, 49. The header gives the workspace formula in octets.
+
+For colour pictures the format is locked and a reference decoder is built. Single-plane greyscale and infrared, signed samples, and multispectral planes follow. This release includes a decoder for colour pictures.
+
+8,167 octets: the whole version 5 colour C99 decoder library, code and data (x86-64, built -Os with function sections, linked with --gc-sections, minus a no-codec baseline)
+
+Pooled bits per sample, version 5 colour coder: 3.5913 on 120 COCO pictures (8-bit), 3.5131 on 35 CC0 camera pictures (8-bit sRGB), 9.2552 on the same 35 pictures (16-bit linear), 2.6962 on 120 Wikimedia Commons pictures (8-bit); every file decoded exactly by the C library.
+
+Among coders whose decoder is at most 98,304 octets, the version 5 colour coder is the smallest in size on COCO-120, the CC0 cameras and Commons-120. Pooled, its files are smaller than JPEG-LS (CharLS, whole picture, 84,335-octet decoder) by 21.0% / 6.2% / 9.9% on COCO / cameras 8-bit / cameras 16-bit and by 20.8% on Commons, and smaller than CCSDS 121 (libaec, per tile-plane, 6,435-octet decoder) by 29.8% / 19.7% / 14.6% and by 33.7% on Commons.
+
+JPEG XL (effort 9) produces smaller files than the version 5 colour coder: by 9.5% on COCO-120, 7.9% on the CC0 cameras (8-bit sRGB), 1.6% (16-bit linear) and 20.9% on Commons-120. JPEG XL's decoder is 713,139 octets and does not meet the 98,304 cap. Commons-120 is a quality-filtered pool (selection bias). Decoder sizes are x86-64 builds, not RISC-V.
+
+## RISC-V reference image
+
+`100on100-v5-riscv64.elf` is the version 5 colour decoder as a RISC-V image, for audit.
+
+35,344 octets: the whole RISC-V decoder image, code and data (stack and heap reserved, not stored)
+
+It is a statically linked 64-bit RISC-V executable (ELF, entry address 0x80000000, no operating
+system) and is not a Linux program. It runs only with the reference runner, which is not published.
+No source code is provided. This release does not document how the image is fed its input or
+returns its output.
 
 ## Status
 
